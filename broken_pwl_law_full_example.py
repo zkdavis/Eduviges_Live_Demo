@@ -17,7 +17,7 @@ tmax = 1e18
 gmin = 1e1
 gmax = 1e8
 with_abs = True
-cool_withKN = False
+cool_withKN = True
 
 R = 1e14 # size of blob
 sigma = 1e-6 #blobs magnetization
@@ -31,7 +31,7 @@ p2 =p1 -1
 gcut = 1e2
 g2cut = 1e5
 
-tmax = tlc*2
+tmax = tlc*4
 
 ###arrays
 n = np.zeros([numt,numg]) #particle distribution dn/d\gamma
@@ -83,9 +83,11 @@ for i in range(1,len(t)):
     I_s[i,:] = para.radiation.radtrans_blob(j_s[i,:],R,ambs[i,:])
     j_ssc[i,:] = para.radiation.ic_iso_powlaw_full(f,I_s[i,:],g,n[i,:])
     I_ssc[i, :] = para.radiation.radtrans_blob(j_ssc[i, :], R, ambs[i, :])
-    dotgKN = para.radiation.rad_cool_pwl(g, f, 4 * np.pi * I_ssc[i, :]  / econs.cLight, cool_withKN)
+    dotgKN = para.radiation.rad_cool_pwl(g, f, 4 * np.pi * I_s[i, :]  / econs.cLight, cool_withKN)
     gdot[i,:] = gdot[0,:] + dotgKN
 
 pc.plot_n(g,n,t)
 pc.plot_j(f,f*(j_s+j_ssc),t)
 pc.plot_I(f,np.pi * 4* (I_ssc + I_s)*f,t)
+pc.plot_n(g,gdot[0:1,:],t[0:1])
+pc.plot_n(g,gdot,t)
